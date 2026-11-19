@@ -8,8 +8,12 @@ async function register(store, vapidKey) {
   const { getMessaging, getToken, onMessage } = await import(`${base}/firebase-messaging.js`);
   const reg = await navigator.serviceWorker.register(
     './firebase-messaging-sw.js?config=' + encodeURIComponent(JSON.stringify(firebaseConfig)), { scope: './' });
+  await navigator.serviceWorker.ready; // getToken can hang if the worker hasn't started yet
   const messaging = getMessaging(store.app);
-  const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: reg });
+  const token = await Promise.race([
+    getToken(messaging, { vapidKey, serviceWorkerRegistration: reg }),
+    new Promise((_, no) => setTimeout(() => no(new Error('timed out getting a notification token')), 20000))
+  ]);
   if (token) await store.saveToken(token);
   // While the app is open, show the same notification the phone would show when closed.
   onMessage(messaging, m => {
