@@ -1,0 +1,4 @@
+.superpowers/
+# Never commit the service account key
+*-firebase-adminsdk-*.json
+service-account*.json

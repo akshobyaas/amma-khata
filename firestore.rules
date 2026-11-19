@@ -1,0 +1,53 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function device() { return get(/databases/$(database)/documents/devices/$(request.auth.uid)); }
+    function isDevice() { return signedIn() && exists(/databases/$(database)/documents/devices/$(request.auth.uid)); }
+    function isOwner() { return isDevice() && device().data.role == 'owner'; }
+    function isAmma() { return isDevice() && device().data.role == 'amma'; }
+
+    // A phone joins by knowing its role's key in config/setup (ownerKey / ammaKey, never readable by phones).
+    // Amma's phone only ever holds the amma key, so it cannot become an owner device.
+    match /devices/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isOwner());
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.role in ['amma', 'owner']
+        && request.resource.data.key == get(/databases/$(database)/documents/config/setup).data[request.resource.data.role + 'Key'];
+      allow update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fcmToken', 'lang']);
+    }
+
+    match /expenses/{id} {
+      allow read: if isDevice();
+      allow create: if isOwner() && request.resource.data.paidBy == null && request.resource.data.amount > 0;
+      // Paid items are locked; the only change to an unpaid item that may set paidBy is marking it paid.
+      allow update, delete: if isOwner() && resource.data.paidBy == null;
+    }
+
+    match /payments/{id} {
+      allow read: if isDevice();
+      allow create: if isOwner()
+        || (isAmma()
+            && request.resource.data.status == 'waiting'
+            && request.resource.data.method == 'upi'
+            && request.resource.data.by == request.auth.uid
+            && request.resource.data.amount > 0
+            && request.resource.data.expenseIds is list
+            && request.resource.data.upiRef == null
+            && request.resource.data.payerName == null
+            && request.resource.data.resolvedAt == null
+            && request.resource.data.keys().hasOnly(['amount', 'expenseIds', 'method', 'status', 'by', 'upiRef', 'payerName', 'createdAt', 'resolvedAt']));
+      allow update: if isOwner()
+        || (isAmma()
+            && resource.data.status == 'waiting'
+            && resource.data.by == request.auth.uid
+            && request.resource.data.status == 'cancelled'
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt']));
+    }
+
+    // Written only by the Gmail script (service account bypasses these rules).
+    match /config/{d} { allow read, write: if false; }
+    match /refs/{r} { allow read, write: if false; }
+  }
+}

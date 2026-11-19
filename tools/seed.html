@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amma Khata · add opening list</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<div class="setup">
+  <h1 style="font-size:22px">Add the opening list</h1>
+  <p>Adds the 13 Nov expenses (₹5,210) once. Open this on your own phone after setting it up as owner.</p>
+  <button id="go" class="btn btn-ink" type="button">Add 9 expenses</button>
+  <p id="out" role="status"></p>
+</div>
+<script type="module">
+import { firebaseConfig } from '../firebase-config.js';
+import { createStore } from '../src/db.js';
+const out = document.getElementById('out');
+const items = [['Petrol', 1750], ['Bangalore trip', 1540], ['Electricity', 95], ['Vegetables', 87],
+  ['Socks', 320], ['Kerchief', 200], ['Body wash', 675], ['Face wash', 328], ['Body lotion', 215]];
+document.getElementById('go').onclick = async () => {
+  out.textContent = 'Working…';
+  try {
+    const store = await createStore(firebaseConfig);
+    const me = await store.myDevice();
+    if (!me || me.role !== 'owner') { out.textContent = 'Set this phone up as owner first (#setup-owner).'; return; }
+    const existing = await new Promise(r => { const stop = store.watch(d => { stop(); r(d.expenses); }); });
+    if (existing.length) { out.textContent = `Not added: there are already ${existing.length} expenses.`; return; }
+    for (const [item, amount] of items) await store.addExpense({ item, amount, date: '2026-11-13' });
+    out.textContent = 'Added. Open the app.';
+  } catch (e) { out.textContent = 'Failed: ' + e.message; }
+};
+</script>
+</body>
+</html>
