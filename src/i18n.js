@@ -17,7 +17,9 @@ export const strings = {
     setupTitle: 'Set up this phone', setupKey: 'Setup key', setupButton: 'Set up',
     setupWrong: "That key didn't work. Check it and try again.",
     notSetUp: "This phone isn't set up yet. Open the setup link Akshobya sent.",
-    allowNotifications: 'Turn on reminders'
+    allowNotifications: 'Turn on reminders', remindersOn: 'Reminders are on',
+    remindersBlocked: 'Notifications are blocked. Tap the lock or ⋮ → Site settings → Notifications → Allow, then reload.',
+    remindersFailed: "Couldn't turn on reminders:", remindersUnsupported: "This browser can't show reminders. Open the app in Chrome."
   },
   kn: {
     balance: 'ಬಾಕಿ', allClear: 'ಏನೂ ಬಾಕಿ ಇಲ್ಲ', credit: 'ಹೆಚ್ಚುವರಿ ಪಾವತಿ',
@@ -36,7 +38,9 @@ export const strings = {
     setupTitle: 'ಈ ಫೋನ್ ಸಿದ್ಧಪಡಿಸಿ', setupKey: 'ಸೆಟಪ್ ಕೀ', setupButton: 'ಸಿದ್ಧಪಡಿಸಿ',
     setupWrong: 'ಆ ಕೀ ಸರಿಯಿಲ್ಲ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     notSetUp: 'ಈ ಫೋನ್ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಅಕ್ಷೋಭ್ಯ ಕಳುಹಿಸಿದ ಸೆಟಪ್ ಲಿಂಕ್ ತೆರೆಯಿರಿ.',
-    allowNotifications: 'ಜ್ಞಾಪನೆಗಳನ್ನು ಆನ್ ಮಾಡಿ'
+    allowNotifications: 'ಜ್ಞಾಪನೆಗಳನ್ನು ಆನ್ ಮಾಡಿ', remindersOn: 'ಜ್ಞಾಪನೆಗಳು ಆನ್ ಆಗಿವೆ',
+    remindersBlocked: 'ಅಧಿಸೂಚನೆಗಳು ತಡೆಯಲ್ಪಟ್ಟಿವೆ. ⋮ → Site settings → Notifications → Allow ಮಾಡಿ, ನಂತರ ಮರುಲೋಡ್ ಮಾಡಿ.',
+    remindersFailed: 'ಜ್ಞಾಪನೆಗಳನ್ನು ಆನ್ ಮಾಡಲಾಗಲಿಲ್ಲ:', remindersUnsupported: 'ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಜ್ಞಾಪನೆಗಳು ಸಾಧ್ಯವಿಲ್ಲ. Chrome ನಲ್ಲಿ ತೆರೆಯಿರಿ.'
   }
 };
 

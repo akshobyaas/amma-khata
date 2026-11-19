@@ -84,7 +84,7 @@ async function start() {
 
   if (vapidKey && !params.get('demo')) {
     const { offerPush } = await import('./src/push.js');
-    offerPush(notice, store, vapidKey, () => lang);
+    offerPush(notice, store, vapidKey, () => lang, device);
   }
 }
 

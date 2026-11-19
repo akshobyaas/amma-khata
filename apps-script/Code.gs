@@ -276,6 +276,9 @@ function setup() {
 // Sends a test notification to both phones.
 function testPush() {
   var io = realIo_();
+  var devices = io.list('devices');
+  console.log('Devices found: ' + devices.length);
+  devices.forEach(function (d) { console.log(d.role + ' · notification token: ' + (d.fcmToken ? 'yes' : 'NO — reminders not turned on')); });
   io.notify('owner', { en: 'Test from Amma Khata', kn: 'ಪರೀಕ್ಷೆ' });
   io.notify('amma', { en: 'Test from Amma Khata', kn: 'ಪರೀಕ್ಷೆ' });
 }

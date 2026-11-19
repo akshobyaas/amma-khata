@@ -19,16 +19,33 @@ async function register(store, vapidKey) {
   return token;
 }
 
-// Registers push quietly when allowed; otherwise shows one "Turn on reminders" button.
-export function offerPush(slot, store, vapidKey, getLang) {
-  if (!('Notification' in window) || !('serviceWorker' in navigator)) return;
-  if (Notification.permission === 'granted') { register(store, vapidKey).catch(console.error); return; }
-  if (Notification.permission === 'denied') return;
-  const btn = h('button', { type: 'button', class: 'btn btn-line', style: 'margin:14px 16px 0;width:calc(100% - 32px)',
-    onclick: async () => {
-      const p = await Notification.requestPermission();
-      btn.remove();
-      if (p === 'granted') await register(store, vapidKey).catch(console.error);
-    } }, '🔔 ' + t('allowNotifications', getLang()));
-  slot.append(btn);
+// Shows "Turn on reminders" until this device has a token, and shows any problem on screen.
+export function offerPush(slot, store, vapidKey, getLang, device) {
+  const say = (text) => slot.replaceChildren(h('p', { class: 'note', role: 'status', style: 'margin:12px 16px 0' }, text));
+  if (!('Notification' in window) || !('serviceWorker' in navigator)) { say(t('remindersUnsupported', getLang())); return; }
+
+  async function turnOn() {
+    let p = Notification.permission;
+    if (p === 'default') p = await Notification.requestPermission();
+    if (p !== 'granted') { say(t('remindersBlocked', getLang())); return; }
+    try {
+      const token = await register(store, vapidKey);
+      if (!token) throw new Error('no token returned');
+      say('✓ ' + t('remindersOn', getLang()));
+      setTimeout(() => slot.replaceChildren(), 4000);
+    } catch (e) {
+      console.error(e);
+      slot.replaceChildren(
+        h('p', { class: 'error', role: 'alert', style: 'margin:12px 16px 4px' }, t('remindersFailed', getLang()) + ' ' + (e && e.message || e)),
+        button());
+    }
+  }
+  const button = () => h('button', { type: 'button', class: 'btn btn-line', style: 'margin:12px 16px 0;width:calc(100% - 32px)', onclick: turnOn },
+    '🔔 ' + t('allowNotifications', getLang()));
+
+  if (device && device.fcmToken && Notification.permission === 'granted') {
+    register(store, vapidKey).catch(e => { console.error(e); slot.replaceChildren(button()); });
+    return;
+  }
+  slot.replaceChildren(button());
 }
