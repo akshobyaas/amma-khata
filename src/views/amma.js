@@ -5,6 +5,14 @@ import { inr, payPlan, parseAmount } from '../format.js';
 import { historyList } from './shared.js';
 import { upiLink } from '../upi.js';
 
+// Opens regular WhatsApp (not WhatsApp Business) on Android; elsewhere falls back to wa.me.
+function whatsAppLink(payee, text) {
+  const web = 'https://wa.me/' + payee.wa + '?text=' + encodeURIComponent(text);
+  if (!/Android/i.test(navigator.userAgent)) return web;
+  return 'intent://send?phone=' + payee.wa + '&text=' + encodeURIComponent(text) +
+    '#Intent;scheme=whatsapp;package=com.whatsapp;S.browser_fallback_url=' + encodeURIComponent(web) + ';end';
+}
+
 // Amma's screen: balance, the unpaid page of the khata, and the pay bar.
 export function mountAmma(root, { store, payee, getLang, setLang, notice = null, openLink = url => { location.href = url; } }) {
   const picked = new Set();
@@ -101,7 +109,7 @@ export function mountAmma(root, { store, payee, getLang, setLang, notice = null,
         h('h2', {}, t('sendTo', lang) + ' ' + inr(amt)),
         h('p', {}, h('span', { class: 'dot', 'aria-hidden': 'true' }), t('waitingHint', lang)),
         h('a', { class: 'btn btn-pay', style: 'display:flex;align-items:center;justify-content:center;text-decoration:none',
-          href: 'https://wa.me/' + (payee.wa || '') + '?text=' + encodeURIComponent('Amma Khata · ' + inr(amt) + ' · ' + payee.pa) }, t('openWhatsApp', lang)),
+          href: whatsAppLink(payee, 'Amma Khata · ' + inr(amt) + ' · ' + payee.pa) }, t('openWhatsApp', lang)),
         h('div', { style: 'margin-top:8px' }, copyBtn),
         h('div', { class: 'quiet-row' },
           h('button', { type: 'button', class: 'btn-quiet', onclick: () => openLink(upiLink({ ...payee, amount: amt, note: 'Amma Khata' })) }, t('tryUpi', lang)),
