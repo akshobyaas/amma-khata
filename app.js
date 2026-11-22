@@ -19,7 +19,7 @@ async function loadStore() {
   if (demo) {
     const { createFakeStore } = await import('./dev/fake-store.js');
     const { demoData } = await import('./dev/demo-data.js');
-    return { store: createFakeStore({ role: demo, ...demoData() }), payee: { pa: '6366594660@upi', pn: 'AKSHOBYA A S' } };
+    return { store: createFakeStore({ role: demo, ...demoData() }), payee: { pa: '6366594660@upi', pn: 'AKSHOBYA A S', wa: '916366594660' } };
   }
   const cfg = await import('./firebase-config.js');
   if (cfg.firebaseConfig.apiKey === 'PASTE_HERE') {

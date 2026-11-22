@@ -11,4 +11,4 @@ export const firebaseConfig = {
 export const vapidKey = 'BCzNr56mAnurVNbDoLonPHUVlj_nRBWPCotfWkK8uAbpHgjKZdFLsInrv1n5itFERtWDEEbYuf56FCla1Vh1VDw';
 
 // Payee details used in every pay link.
-export const payee = { pa: '6366594660@upi', pn: 'AKSHOBYA A S' };
+export const payee = { pa: '6366594660@upi', pn: 'AKSHOBYA A S', wa: '916366594660' }; // wa: your WhatsApp number with 91

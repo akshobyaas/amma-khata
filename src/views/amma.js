@@ -35,7 +35,7 @@ export function mountAmma(root, { store, payee, getLang, setLang, notice = null,
     paying = true;
     try { await store.startPayment(plan); } finally { paying = false; }
     picked.clear();
-    openLink(upiLink({ ...payee, amount: plan.amount, note: 'Amma Khata' }));
+    // No auto-open: GPay blocks link payments to personal UPI IDs. The waiting panel shows how to pay.
   }
 
   function otherAmountSheet(lang) {
@@ -93,10 +93,19 @@ export function mountAmma(root, { store, payee, getLang, setLang, notice = null,
       bar = h('div', { class: 'status ok', role: 'status' },
         h('h2', {}, '✓ ' + t('confirmed', lang)), h('p', {}, inr(flash.amount)));
     } else if (waiting) {
+      const amt = waiting.amount;
+      const copyBtn = h('button', { type: 'button', class: 'btn btn-line', onclick: async () => {
+        try { await navigator.clipboard.writeText(String(amt)); copyBtn.textContent = '✓ ' + t('copied', lang); } catch {}
+      } }, t('copyAmount', lang) + ' ' + inr(amt));
       bar = h('div', { class: 'status', role: 'status' },
-        h('h2', {}, h('span', { class: 'dot', 'aria-hidden': 'true' }), t('waiting', lang) + ' · ' + inr(waiting.amount)),
-        h('p', {}, t('waitingHint', lang)),
-        h('button', { type: 'button', class: 'btn btn-line', onclick: () => store.cancelPayment(waiting.id) }, t('didntPay', lang)));
+        h('h2', {}, t('sendTo', lang) + ' ' + inr(amt)),
+        h('p', {}, h('span', { class: 'dot', 'aria-hidden': 'true' }), t('waitingHint', lang)),
+        h('a', { class: 'btn btn-pay', style: 'display:flex;align-items:center;justify-content:center;text-decoration:none',
+          href: 'https://wa.me/' + (payee.wa || '') }, t('openWhatsApp', lang)),
+        h('div', { style: 'margin-top:8px' }, copyBtn),
+        h('div', { class: 'quiet-row' },
+          h('button', { type: 'button', class: 'btn-quiet', onclick: () => openLink(upiLink({ ...payee, amount: amt, note: 'Amma Khata' })) }, t('tryUpi', lang)),
+          h('button', { type: 'button', class: 'btn-quiet', onclick: () => store.cancelPayment(waiting.id) }, t('didntPay', lang))));
     } else {
       const allAmt = Math.max(due, 0);
       bar = [

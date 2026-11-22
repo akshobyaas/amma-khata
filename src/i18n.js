@@ -4,7 +4,7 @@ export const strings = {
     balance: 'Balance due', allClear: 'Nothing due', credit: 'Paid extra',
     paySelected: 'Pay selected', payAll: 'Pay all', otherAmount: 'Other amount',
     enterAmount: 'Enter amount', pay: 'Pay', cancel: 'Cancel',
-    waiting: 'Waiting for confirmation', waitingHint: 'This changes by itself when the money reaches Akshobya.',
+    waiting: 'Waiting for confirmation', waitingHint: 'Pay in WhatsApp or GPay as usual. This turns ✓ by itself when the money reaches Akshobya.',
     confirmed: 'Payment received', didntPay: "I didn't pay",
     history: 'Payments', noPayments: 'No payments yet',
     statusWaiting: 'Waiting', statusConfirmed: 'Received', statusNeedsCheck: 'Being checked', statusCancelled: 'Cancelled',
@@ -17,6 +17,7 @@ export const strings = {
     setupTitle: 'Set up this phone', setupKey: 'Setup key', setupButton: 'Set up',
     setupWrong: "That key didn't work. Check it and try again.",
     notSetUp: "This phone isn't set up yet. Open the setup link Akshobya sent.",
+    sendTo: 'Send to Akshobya', openWhatsApp: 'Open WhatsApp and pay', copyAmount: 'Copy amount', copied: 'Copied', tryUpi: 'Try UPI app',
     allowNotifications: 'Turn on reminders', remindersOn: 'Reminders are on',
     remindersBlocked: 'Notifications are blocked. Tap the lock or ⋮ → Site settings → Notifications → Allow, then reload.',
     remindersFailed: "Couldn't turn on reminders:", remindersUnsupported: "This browser can't show reminders. Open the app in Chrome."
@@ -25,7 +26,7 @@ export const strings = {
     balance: 'ಬಾಕಿ', allClear: 'ಏನೂ ಬಾಕಿ ಇಲ್ಲ', credit: 'ಹೆಚ್ಚುವರಿ ಪಾವತಿ',
     paySelected: 'ಆಯ್ಕೆ ಮಾಡಿದ್ದು ಪಾವತಿಸಿ', payAll: 'ಎಲ್ಲಾ ಪಾವತಿಸಿ', otherAmount: 'ಬೇರೆ ಮೊತ್ತ',
     enterAmount: 'ಮೊತ್ತ ನಮೂದಿಸಿ', pay: 'ಪಾವತಿಸಿ', cancel: 'ರದ್ದು',
-    waiting: 'ದೃಢೀಕರಣಕ್ಕೆ ಕಾಯುತ್ತಿದೆ', waitingHint: 'ಹಣ ಅಕ್ಷೋಭ್ಯನಿಗೆ ತಲುಪಿದಾಗ ಇದು ತಾನಾಗಿಯೇ ಬದಲಾಗುತ್ತದೆ.',
+    waiting: 'ದೃಢೀಕರಣಕ್ಕೆ ಕಾಯುತ್ತಿದೆ', waitingHint: 'ಎಂದಿನಂತೆ WhatsApp ಅಥವಾ GPay ನಲ್ಲಿ ಪಾವತಿಸಿ. ಹಣ ತಲುಪಿದಾಗ ಇದು ತಾನಾಗಿಯೇ ✓ ಆಗುತ್ತದೆ.',
     confirmed: 'ಪಾವತಿ ಯಶಸ್ವಿ', didntPay: 'ನಾನು ಪಾವತಿಸಿಲ್ಲ',
     history: 'ಪಾವತಿಗಳು', noPayments: 'ಇನ್ನೂ ಯಾವುದೇ ಪಾವತಿ ಇಲ್ಲ',
     statusWaiting: 'ಕಾಯುತ್ತಿದೆ', statusConfirmed: 'ತಲುಪಿದೆ', statusNeedsCheck: 'ಪರಿಶೀಲನೆಯಲ್ಲಿ', statusCancelled: 'ರದ್ದಾಗಿದೆ',
@@ -38,6 +39,7 @@ export const strings = {
     setupTitle: 'ಈ ಫೋನ್ ಸಿದ್ಧಪಡಿಸಿ', setupKey: 'ಸೆಟಪ್ ಕೀ', setupButton: 'ಸಿದ್ಧಪಡಿಸಿ',
     setupWrong: 'ಆ ಕೀ ಸರಿಯಿಲ್ಲ. ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     notSetUp: 'ಈ ಫೋನ್ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಅಕ್ಷೋಭ್ಯ ಕಳುಹಿಸಿದ ಸೆಟಪ್ ಲಿಂಕ್ ತೆರೆಯಿರಿ.',
+    sendTo: 'ಅಕ್ಷೋಭ್ಯನಿಗೆ ಕಳುಹಿಸಿ', openWhatsApp: 'WhatsApp ತೆರೆದು ಪಾವತಿಸಿ', copyAmount: 'ಮೊತ್ತ ನಕಲಿಸಿ', copied: 'ನಕಲಿಸಲಾಗಿದೆ', tryUpi: 'UPI ಆ್ಯಪ್ ಪ್ರಯತ್ನಿಸಿ',
     allowNotifications: 'ಜ್ಞಾಪನೆಗಳನ್ನು ಆನ್ ಮಾಡಿ', remindersOn: 'ಜ್ಞಾಪನೆಗಳು ಆನ್ ಆಗಿವೆ',
     remindersBlocked: 'ಅಧಿಸೂಚನೆಗಳು ತಡೆಯಲ್ಪಟ್ಟಿವೆ. ⋮ → Site settings → Notifications → Allow ಮಾಡಿ, ನಂತರ ಮರುಲೋಡ್ ಮಾಡಿ.',
     remindersFailed: 'ಜ್ಞಾಪನೆಗಳನ್ನು ಆನ್ ಮಾಡಲಾಗಲಿಲ್ಲ:', remindersUnsupported: 'ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಜ್ಞಾಪನೆಗಳು ಸಾಧ್ಯವಿಲ್ಲ. Chrome ನಲ್ಲಿ ತೆರೆಯಿರಿ.'
