@@ -3,9 +3,11 @@ import { t } from '../i18n.js';
 import { balance, unpaid, allocate, canEdit, isStale, pickable } from '../ledger.js';
 import { inr, todayIST, parseAmount } from '../format.js';
 import { historyList, pickList, sheet } from './shared.js';
+import { upiLink } from '../upi.js';
+import { qrPng } from '../qr.js';
 
 // Akshobya's screen: add expenses, check payments, record cash.
-export function mountOwner(root, { store, getLang, setLang, notice = null }) {
+export function mountOwner(root, { store, payee, getLang, setLang, notice = null }) {
   let data = { expenses: [], payments: [] };
   const stop = store.watch(next => { data = next; render(); });
 
@@ -41,6 +43,48 @@ export function mountOwner(root, { store, getLang, setLang, notice = null }) {
          await store.recordCash({ amount: a, expenseIds: picker.ids() }); dlg.close();
        } }, t('save', lang))]);
     amt.focus();
+  }
+
+  // Makes a QR for the ticked items and shares it (WhatsApp → Amma). Recorded as waiting only once shared,
+  // so her payment from that QR auto-confirms.
+  function sendQrSheet(lang) {
+    const open = pickable(data.expenses, data.payments);
+    const total = () => open.filter(e => picker.ids().includes(e.id)).reduce((s, e) => s + e.amount, 0);
+    const label = h('p', { class: 'note' });
+    const update = () => { label.textContent = t('amount', lang) + ': ' + inr(total()); };
+    const picker = pickList(open, open.map(e => e.id), lang, update);
+    const box = h('div', {}, picker.el);
+    const err = h('p', { class: 'error', role: 'alert', hidden: true });
+    let busy = false;
+    const shareBtn = h('button', { type: 'button', class: 'btn btn-ink', onclick: async () => {
+      const ids = picker.ids(), amount = total();
+      if (!amount || busy) return;
+      busy = true;
+      try {
+        const blob = await qrPng(upiLink({ ...payee, amount, note: 'Amma Khata' }), amount);
+        const file = new File([blob], 'amma-khata-' + amount + '.png', { type: 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file], text: 'Amma Khata · ' + inr(amount) }); }
+          catch (e) { if (e && e.name === 'AbortError') return; throw e; }
+          await store.startPayment({ amount, expenseIds: ids });
+          dlg.close();
+        } else {
+          // No share sheet (e.g. laptop): show the image to save, then record once sent.
+          const url = URL.createObjectURL(blob);
+          box.replaceChildren(
+            h('img', { src: url, alt: 'QR ' + inr(amount), style: 'width:100%;max-width:320px;display:block;margin:0 auto' }),
+            h('p', { class: 'note' }, t('qrSaveHint', lang)),
+            h('a', { class: 'btn btn-line', href: url, download: file.name, style: 'display:flex;align-items:center;justify-content:center;text-decoration:none' }, t('saveQr', lang)));
+          shareBtn.textContent = t('iSentIt', lang);
+          shareBtn.onclick = async () => { await store.startPayment({ amount, expenseIds: ids }); dlg.close(); };
+        }
+      } catch (e) {
+        err.hidden = false; err.textContent = String(e && e.message || e);
+      } finally { busy = false; }
+    } }, t('shareQr', lang));
+    update();
+    const dlg = sheet(t('sendQr', lang), [h('p', { class: 'note' }, t('coversItems', lang)), box, label, err],
+      [h('button', { type: 'button', class: 'btn btn-line', onclick: () => dlg.close() }, t('cancel', lang)), shareBtn]);
   }
 
   function editSheet(e, lang) {
@@ -110,7 +154,9 @@ export function mountOwner(root, { store, getLang, setLang, notice = null }) {
         h('h2', { class: 'page-title' }, t('history', lang)),
         historyList(data.payments, lang, { showCancelled: true })),
       h('div', { class: 'paybar' }, h('div', { class: 'paybar-inner' },
-        h('button', { type: 'button', class: 'btn btn-line', onclick: () => cashSheet(lang) }, t('recordCash', lang)))));
+        h('button', { type: 'button', class: 'btn btn-ink', disabled: !open.length, onclick: () => sendQrSheet(lang) }, t('sendQr', lang)),
+        h('div', { class: 'quiet-row' },
+          h('button', { type: 'button', class: 'btn-quiet', onclick: () => cashSheet(lang) }, t('recordCash', lang))))));
   }
 
   return stop;
